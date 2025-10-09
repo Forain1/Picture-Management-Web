@@ -8,12 +8,45 @@ import {
 } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
-
+import { useState } from "react";
+import axios from "axios";
 
 
 export default function Login() {
   const navigate = useNavigate();
+  const [form , setform] = useState({
+      email:'',
+      password:''
+  });
 
+
+  const handleSubmit = async (e)=>{
+      e.preventDefault();
+      const email = form.email;
+      const password = form.password;
+
+      //调用后端判断登录
+      try {
+        const res = await axios.post('/api/login',{
+          email,
+          password
+        });
+        console.log(res);
+        alert("登录成功!");
+        navigate('/');
+      } catch (error) {
+        console.error(error);
+        alert(error.response.data.message)
+        return;
+      }
+
+  }
+
+
+  const handleChange = (e)=>{
+      const {name,value} = e.target;
+      setform({...form,[name]:value});
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -33,7 +66,10 @@ export default function Login() {
           登录
         </Typography>
 
-        <Box component="form" sx={{ mt: 1 }}>
+        <Box component="form" sx={{ mt: 1 }}
+        onSubmit={handleSubmit}
+        method="post"
+        >
 
           <TextField
             margin="normal"
@@ -41,6 +77,9 @@ export default function Login() {
             fullWidth
             label="邮箱地址"
             type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
               slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色
@@ -52,6 +91,9 @@ export default function Login() {
             fullWidth
             label="密码"
             type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
               slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色

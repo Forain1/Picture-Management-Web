@@ -7,19 +7,27 @@ import {
   Paper,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
 
 export default function Register() {
 
   const navigate = useNavigate();
 
+  const [form,setForm] = useState({
+    userid : '',
+    email:'',
+    password:'',
+    confirmpassword:''
+  })
+
+  //表单提交处理函数
   const handleSubmit = async (e)=>{
         e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const email = data.get("email");
-        const password = data.get("password");
-        const confirmpassword = data.get("confirmpassword");
-        const userid = data.get("userid");
+        const email = form.email;
+        const password = form.password;
+        const confirmpassword = form.confirmpassword;
+        const userid = form.userid;
 
         //判断密码一致性
         if(confirmpassword!==password){
@@ -38,7 +46,6 @@ export default function Register() {
           console.log(response.data); // 后端返回的数据
           alert("注册成功！");
           navigate("/login"); // 注册后跳转登录
-
         } catch (error) {
 
           console.error(error);
@@ -46,11 +53,15 @@ export default function Register() {
           return;
           
         }
-
-        //返回登录页面
-        navigate('/login');
   }
 
+  //处理组件输入改变
+  const handleChange = (e)=>{
+      const {name,value} = e.target;
+      setForm({...form,[name]:value});
+  }
+
+  
   return (
     <Container component="main" maxWidth="xs">
 
@@ -79,6 +90,8 @@ export default function Register() {
             fullWidth
             label="用户名"
             name="userid"
+            value={form.userid}
+            onChange={handleChange}
             slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色
@@ -92,6 +105,8 @@ export default function Register() {
             label="邮箱地址"
             name="email"
             type="email"
+            value={form.email}
+            onChange={handleChange}
               slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色
@@ -104,6 +119,8 @@ export default function Register() {
             label="密码"
             type="password"
             name="password"
+            value={form.password}
+            onChange={handleChange}
               slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色
@@ -116,6 +133,8 @@ export default function Register() {
             label="确认密码"
             type="password"
             name="confirmpassword"
+            value={form.confirmpassword}
+            onChange={handleChange}
               slotProps={{
               inputLabel: { style: { color: 'white' } }, // Label 颜色
               input: { style: { color: 'white' } },      // 输入文字颜色
