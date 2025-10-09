@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { useUser } from "../components/UserProvider";
 
 
 export default function Login() {
@@ -18,6 +19,7 @@ export default function Login() {
       email:'',
       password:''
   });
+  const {setToken}  = useUser();
 
 
   const handleSubmit = async (e)=>{
@@ -31,9 +33,18 @@ export default function Login() {
           email,
           password
         });
-        console.log(res);
+        
+        // console.log(res);
         alert("登录成功!");
+
+        //保存token到本地存储,以便于下一次可以直接访问
+        localStorage.setItem('token',res.data.token);
+
+        //同时更新全局token以触发用户信息获取
+        setToken(res.data.token);
+
         navigate('/');
+        
       } catch (error) {
         console.error(error);
         alert(error.response.data.message)

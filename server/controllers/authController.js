@@ -1,7 +1,9 @@
 import User from "../models/user.js";
+import {genToken,authToken} from "../middleware/authToken.js"
 
 
 
+//处理注册
 export const registerUser = async (req, res) => {
   const { userid, email, password } = req.body;
 
@@ -29,6 +31,7 @@ export const registerUser = async (req, res) => {
 };
 
 
+//处理登录
 export const loginUser = async (req,res) => {
   const {email,password} = req.body;
   
@@ -44,11 +47,22 @@ export const loginUser = async (req,res) => {
     if(!userRes){
       return res.status(400).json({message:"邮箱或密码错误"});
     }else{
-      return res.status(200).json({message:"用户登录成功"});
+      //用JWT生成token,并返回给前端
+      const token = genToken(newUser.getEmail(),newUser.getUserId());
+      return res.status(200).json({message:"用户登录成功",token});
     }
   } catch (error) {
     return res.status(500).json({message:"发生某些问题,登录失败"}); 
   }
 }
+
+
+//获取用户信息,需要经过中间件的保护
+export const userInfo = async (req,res) =>{
+  const user = req.user;
+  //可以通过user的唯一emali去定位数据库中的其他表,在这里只做userid和email的返回
+  return res.status(200).json({message:"获取用户id成功",user});
+}
+
 
 

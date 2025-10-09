@@ -43,11 +43,10 @@ export default function Register() {
               password,
               userid
             });
-          console.log(response.data); // 后端返回的数据
+          //console.log(response.data); // 后端返回的数据
           alert("注册成功！");
           navigate("/login"); // 注册后跳转登录
         } catch (error) {
-
           console.error(error);
           alert(error.response.data.message);
           return;

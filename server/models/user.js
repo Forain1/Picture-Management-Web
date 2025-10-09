@@ -5,12 +5,12 @@ import pool from "../db.js";
 export default class User {
   #userid;
   #email;
-  #passwd;
+  #password;
 
-  constructor(userid, email, passwd) {
+  constructor(userid, email, password) {
     this.#userid = userid;
     this.#email = email;
-    this.#passwd = passwd;
+    this.#password = password;
   }
 
   // 提供访问方法
@@ -45,7 +45,7 @@ export default class User {
     try {
         connection  = await pool.getConnection();
         const sql = 'insert into users (userid , email ,password) values (?,?,?)';
-        await connection.execute(sql,[this.#userid,this.#email,this.#passwd]);
+        await connection.execute(sql,[this.#userid,this.#email,this.#password]);
     } catch (error) {
         console.log(error);
         throw error;
@@ -63,7 +63,9 @@ export default class User {
       const [rows] = await connection.execute(sql,[this.#email]);
       if(rows.length===0)return false;
       //只有一个对应的邮箱
-      return rows[0].password===this.#passwd;
+      this.#email = rows[0].email;
+      this.#userid = rows[0].userid;
+      return rows[0].password===this.#password;
     } catch (error) {
       console.log(error);
       throw error;

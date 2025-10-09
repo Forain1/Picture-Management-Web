@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Dialog, DialogPanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom';
+import { useUser } from './UserProvider';
 
 const navigation = [
   { name: '首页', to: '/' },
@@ -14,6 +15,15 @@ const navigation = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const {user,loading} = useUser();
+
+  //当用户登录了,需要展示用户的id,而不是登录提示
+  const loginPC = <Link to="/login" className="text-sm/6 font-semibold text-white">
+              Log in <span aria-hidden="true">&rarr;</span>
+            </Link>;
+  const userPC = <Link to='/profile' className="text-sm/6 font-semibold text-white">Hi,{user?user.userid:''}!</Link>
+  const UserInfoPC = loading ?<></>:user?userPC:loginPC;
+
 
   return (
     <>
@@ -53,9 +63,7 @@ export default function Navbar() {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link to="/login" className="text-sm/6 font-semibold text-white">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </Link>
+              {UserInfoPC}
           </div>
         </nav>
       </header>
