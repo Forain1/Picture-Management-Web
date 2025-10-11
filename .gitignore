@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+# photos
+# 忽略 uploads 文件夹下的所有文件
+server/uploads/*
+
+# 但保留 uploads 文件夹本身
+!/server/uploads/.gitkeep

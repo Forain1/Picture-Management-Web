@@ -13,13 +13,13 @@ export const UserProvider = ({ children }) => {
       setLoading(false);
       return;
     }
+    
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     const fetchUserID = async ()=>{
       try {
         const res = await axios.get('/api/profile');
         const {user} = res.data;
-        //console.log(user);
         setUser({email:user.email,userid:user.userid});
         console.log("token check successfully!");
       } catch (error) {

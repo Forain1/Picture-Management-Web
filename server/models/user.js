@@ -22,15 +22,16 @@ export default class User {
     return this.#email;
   }
 
-  //检测邮箱是否已经存在,若存在返回false,否则返回true
+  //检测邮箱和userid是否已经存在,若存在返回false,否则返回true
   async checkEmail(){
     let connection;
     try {
         connection = await pool.getConnection();//从池子获取连接
-        const sql = 'select * from users where email = ?';
-        const [rows] = await connection.execute(sql,[this.#email]);
+        const sql = 'select * from users where email = ? or userid = ?';
+        const [rows] = await connection.execute(sql,[this.#email,this.#userid]);
         if(rows.length>0)return false;
         else return true;
+
     } catch (error) {
         console.log(error);
         throw error;

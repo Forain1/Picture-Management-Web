@@ -12,7 +12,7 @@ export default function App() {
 
 
   return (
-    <div className="bg-zinc-900 text-white h-screen overflow-hidden">
+    <div className="bg-zinc-900 text-white min-h-screen overflow-hidden">
         <UserProvider>
           <Navbar/>
           {/* 路由配置 */}
