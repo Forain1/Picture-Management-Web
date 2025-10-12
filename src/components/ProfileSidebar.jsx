@@ -2,12 +2,33 @@ import { Box, Avatar, Button, Divider,Typography } from "@mui/material";
 import { useUser } from "./UserProvider";
 import axios from "axios";
 import React, { useState } from "react";
+import AddTagBtn from "./AddTagBtn";
+import ShowTagBtn from "./ShowTagBtn";
 
-export default function ProfileSidebar() {
+
+export default function ProfileSidebar({allTags,setAllTags}) {
     const {user} = useUser();
     const [file ,setFile] = useState(null);
     const [uploading,setUploading] = useState(false);
 
+
+    const onAddTag = async (newTag)=>{
+      //若新加入的tag已经存在了 不允许添加
+      if(allTags.includes(newTag)){
+        alert("标签已存在!");
+        return;
+      }else{
+        //否则添加标签,调用对应的后端api
+        try {
+          await axios.post("/api/addTag",{tag:newTag});
+         setAllTags((prevTags) => [...prevTags, newTag]);
+         alert("添加标签成功!");
+        } catch (error) {
+          console.error("添加标签失败:", error);
+          alert("添加标签失败!");
+        }
+      }
+    }
 
     const handleChange = (e)=>{
         setFile(e.target.files[0]);
@@ -32,6 +53,11 @@ export default function ProfileSidebar() {
         }
     };
 
+    const handleCancel = ()=>{
+      setFile(null);
+      setUploading(false);
+    }
+
 
   return (
     <Box
@@ -41,8 +67,10 @@ export default function ProfileSidebar() {
         flexDirection: "column",
         alignItems: "center",
         background: "linear-gradient(to bottom, #1f1f23, #27272a, #323238)",
-        boxShadow: "4px 0 15px rgba(0,0,0,0.5)",
+        boxShadow: "4px 0 10px rgba(0,0,0,0.5)",
         borderRadius: "16px",
+        position: "relative", 
+        zIndex: 1,            
         p: 2,
         
     }}
@@ -80,29 +108,45 @@ export default function ProfileSidebar() {
         <input type="file" accept="image/*" hidden onChange={handleChange} />
         </Button>
 
-        {file && (
-        <Button
+      {/* 确认上传和取消按钮,只有在选择了文件后才显示 */}
+      {file && (
+        <div style={{ display: "flex", gap: "8px", marginBottom: "8px" }}>
+          <Button
             fullWidth
             variant="outlined"
             color="primary"
-            sx={{ mb: 1 }}
             onClick={handleUpload}
             disabled={uploading}
-        >
+          >
             {uploading ? "上传中..." : "确认上传"}
-        </Button>
-        )}
+          </Button>
+
+          <Button
+            fullWidth
+            variant="outlined"
+            color="secondary"
+            onClick={handleCancel} // 你需要实现的取消函数
+            disabled={uploading}
+          >
+            取消上传
+          </Button>
+        </div>
+      )}
 
 
-      <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
-        Demo2
+      {/* 用来输入标签进行检索 */}
+      <AddTagBtn onAddTag={onAddTag} />
+      <ShowTagBtn allTags={allTags} />
+
+      {/* <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
+        添加标签
       </Button>
-      <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
-        Demo3
+        <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
+        查看已有标签
       </Button>
       <Button fullWidth color="error" variant="outlined">
         退出登录
-      </Button>
+      </Button> */}
     </Box>
   );
 }

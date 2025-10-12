@@ -4,6 +4,8 @@ import exifParser from "exif-parser"
 import path from "path"
 import { fileURLToPath } from "url";
 
+
+//用户上传照片 自动解析exif信息
 export const uploadPhoto = async (req,res) =>{
     try {
         const file = req.file;
@@ -50,6 +52,34 @@ export const uploadPhoto = async (req,res) =>{
 }
 
 
+export const uploadTag = async(req,res) =>{
+    try {
+        const user = req.user;
+        const {tag} = req.body;
+        if(!tag||tag.trim()==='')return res.status(400).json({message:'标签不能为空'});
+        await Photo.storeTag(user.userid,tag.trim().toLowerCase());
+        res.status(200).json({message:'上传标签成功'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:'上传标签失败',error:error.message});
+    }
+}
+
+export const addTagToPhoto = async(req,res) =>{
+    try {
+        const user = req.user;
+        const {photoid,tag} = req.body;
+        await Photo.addTagToPhoto(user.userid,photoid,tag);
+        res.status(200).json({message:'添加标签成功'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:'添加标签失败',error:error.message});
+    }
+}
+
+
+
+//这里需要后续做排序,根据tag来返回需要的url,通过photo类进行完善
 export const getPhotoUrls = async(req,res) =>{
     try {
         const user = req.user;
@@ -61,7 +91,21 @@ export const getPhotoUrls = async(req,res) =>{
     }
 }
 
+//获取该用户的全部标签
+export const getAllTags = async(req,res) =>{
+    try {
+        const user = req.user;
+        const tags = await Photo.getAllTags(user.userid);
+        res.status(200).json({tags});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:'获取标签失败',error:error.message}); 
+    }
+}
 
+
+
+//单纯的发送照片文件
 export const sendPhoto = (req, res) => {
   // 从 req.params 获取路径参数
   const { filename } = req.params;
@@ -82,3 +126,4 @@ export const sendPhoto = (req, res) => {
     // 返回文件给浏览器
     res.status(200).sendFile(filePath);
 };
+

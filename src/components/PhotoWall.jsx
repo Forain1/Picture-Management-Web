@@ -3,79 +3,68 @@ import { Box, Card, CardMedia } from "@mui/material";
 import { useState,useEffect } from "react";
 import axios from "axios";
 import { useUser } from "./UserProvider";
+import PhotoDetail from "./PhotoDetail";
 
 
-// 模拟照片数据（本地资源）
-const photos = [
-  { id: 1, url: "/src/assets/image1.jpg" },
-  { id: 2, url: "/src/assets/image2.jpg"},
-  { id: 3 ,url: "/src/assets/image3.jpg"},
-  { id: 4 ,url: "/src/assets/image3.jpg"},
-  { id: 5 ,url: "/src/assets/image3.jpg"},
-  { id: 6 ,url: "/src/assets/image2.jpg"},
-  { id: 7 ,url: "/src/assets/image2.jpg"},
-  { id: 8 ,url: "/src/assets/image2.jpg"},
-  { id: 9 ,url: "/src/assets/image2.jpg"},
-  { id: 10 ,url: "/src/assets/image2.jpg"},
-  { id: 11 ,url: "/src/assets/image2.jpg"},
-  { id: 12,url: "/src/assets/image2.jpg"},
-  { id: 13 ,url: "/src/assets/image2.jpg"},
-  { id: 14 ,url: "/src/assets/image2.jpg"},
-  { id: 15 ,url: "/src/assets/image2.jpg"},
-];
+export default function PhotoWall({photoList,allTags,setPhotoList}) {
 
-export default function PhotoWall() {
-  const [photoList, setPhotoList] = useState([]);
-  const {user,loading,token} = useUser();
+  const {token} = useUser();
+  const [page,setPage] = useState(0);//一开始的照片页数,每一页只展示十张照片,to be done
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  useEffect(()=>{
-
-      if(loading||!user)return;
-      
-      const fetchPhotos = async()=>{
-        try {
-          const response = await axios.get("/api/photosUrl");
-          setPhotoList(response.data.photoUrls);
-          console.log("获取照片列表:", response.data.photoUrls);
-        } catch (error) {
-          console.error("获取照片列表失败:", error);
-        }
-      }
-      fetchPhotos();
-  },[user,loading]);
+  const addTagToPhoto = (photoId, newTag) => {
+    setPhotoList(prevList =>
+      prevList.map(photo =>
+        photo.id === photoId
+          ? {
+              ...photo,
+              tags: photo.tags.includes(newTag) ? photo.tags : [...photo.tags, newTag]
+            }
+          : photo
+      )
+    );
+  };
 
 
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {/* 右侧瀑布流照片墙 */}
-      <Box
-        sx={{
-          flex: 1,
-          p: 3,
-          backgroundColor: "#18181b", // 与背景一致
-          columnCount: { xs: 2, sm: 3, md: 4 }, // 响应式列数
-          columnGap: "16px",
-        }}
-      >
-        {photoList.map((photo) => (
-          <Card
-            key={photo.id}
-            sx={{
-              mb: "16px",
-              borderRadius: "16px",
-              overflow: "hidden",
-              breakInside: "avoid", // 防止列内断裂
-            }}
-          >
-            <CardMedia
-              component="img"
-              image={`${photo.url}?token=${token}`} // 使用本地资源路径
-              alt={`photo-${photo.id}`}
-            />
-          </Card>
-        ))}
+      <Box sx={{ display: "flex", width: "100%", height: "100%" }}>
+        {/* 瀑布流照片墙 */}
+        <Box
+          sx={{
+            flex: 1,
+            p: 3,
+            backgroundColor: "#18181b",
+            columnCount: { xs: 2, sm: 3, md: 4 },
+            columnGap: "16px",
+            overflowY: "auto", // 允许滚动
+            height: "100%",
+          }}
+        >
+          {photoList.map(photo => (
+            <Card
+              key={photo.id}
+              sx={{
+                mb: "16px",
+                borderRadius: "16px",
+                overflow: "hidden",
+                breakInside: "avoid",
+              }}
+            >
+              <CardMedia
+                component="img"
+                image={`${photo.url}?token=${token}`}
+                alt={`photo-${photo.id}`}
+                onClick={() => setSelectedPhoto(photo)}
+              />
+            </Card>
+          ))}
+        </Box>
+
+        {/* 侧边栏 */}
+        {selectedPhoto && (
+          <PhotoDetail photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} allTags={allTags} addTagToPhoto={addTagToPhoto} />
+        )}
       </Box>
-    </Box>
   );
 }
