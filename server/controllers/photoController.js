@@ -1,8 +1,8 @@
 import Photo from "../models/photo.js"
 import fs from "fs"
 import exifParser from "exif-parser"
-
-
+import path from "path"
+import { fileURLToPath } from "url";
 
 export const uploadPhoto = async (req,res) =>{
     try {
@@ -48,3 +48,37 @@ export const uploadPhoto = async (req,res) =>{
     }
 
 }
+
+
+export const getPhotoUrls = async(req,res) =>{
+    try {
+        const user = req.user;
+        const photoUrls = await Photo.getPhotoUrls(user.userid);
+        res.status(200).json({photoUrls});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:'获取照片列表失败',error:error.message});
+    }
+}
+
+
+export const sendPhoto = (req, res) => {
+  // 从 req.params 获取路径参数
+  const { filename } = req.params;
+  const userid = req.user.userid;
+
+    // 当前文件的绝对路径
+    const __filename = fileURLToPath(import.meta.url);
+    // 当前文件夹
+    const __dirname = path.dirname(__filename);
+
+    // 构建绝对路径
+    const filePath = path.join(__dirname, "../uploads", userid, filename);
+    // 文件存在检查
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).send("图片不存在");
+    }
+
+    // 返回文件给浏览器
+    res.status(200).sendFile(filePath);
+};

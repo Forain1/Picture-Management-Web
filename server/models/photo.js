@@ -26,13 +26,15 @@ export default class Photo{
         this.#uploadTime = new Date().getTime();
     }
 
+
     async storePhoto(){
        let connection;
        try {
             connection = await pool.getConnection();
+            const [user] = await connection.execute('SELECT id FROM users WHERE userid = ?', [this.#userid]);
            // console.log([this.#userid,this.#originalName,this.#fileName,this.#path,this.#width,this.#height,this.#uploadTime]);
-            const sql = 'insert into photos (userid, originalname, filename, path, width, height,uploadtime) values (?,?,?,?,?,?,?)';
-            await connection.execute(sql,[this.#userid,this.#originalName,this.#fileName,this.#path,this.#width,this.#height,this.#uploadTime]);
+            const sql = 'insert into photos (user_id, originalname, filename, path, width, height,uploadtime) values (?,?,?,?,?,?,?)';
+            await connection.execute(sql,[user[0].id,this.#originalName,this.#fileName,this.#path,this.#width,this.#height,this.#uploadTime]);
         } catch (error) {
             console.error(error);
             throw error;
@@ -41,7 +43,33 @@ export default class Photo{
         }
     }
 
-
+    //通过userid获取该用户的照片url
+    static async getPhotoUrls(userid){
+        let connection;
+        try {
+            connection = await pool.getConnection();
+            const sql = `SELECT p.* 
+                        FROM photos p
+                        JOIN users u ON p.user_id = u.id
+                        WHERE u.userid = ?
+                        ORDER BY p.uploadtime DESC;
+                        `;
+            const [rows] = await connection.execute(sql,[userid]);
+            const photoUrls = rows.map((row)=>{
+                return {
+                    id:row.id,//存在数据库中的id,这里可以做调整
+                    url:`api/uploads/${userid}/${row.filename}`,//照片的访问路径
+                    originalName:row.originalname,//照片的原始文件名
+                }
+            })
+            return photoUrls;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            if (connection) connection.release();
+        }
+    }
 
     getUserId(){    
         return this.#userid;

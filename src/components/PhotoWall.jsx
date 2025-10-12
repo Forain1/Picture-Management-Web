@@ -1,5 +1,8 @@
 import React from "react";
 import { Box, Card, CardMedia } from "@mui/material";
+import { useState,useEffect } from "react";
+import axios from "axios";
+import { useUser } from "./UserProvider";
 
 
 // 模拟照片数据（本地资源）
@@ -22,6 +25,27 @@ const photos = [
 ];
 
 export default function PhotoWall() {
+  const [photoList, setPhotoList] = useState([]);
+  const {user,loading,token} = useUser();
+
+  useEffect(()=>{
+
+      if(loading||!user)return;
+      
+      const fetchPhotos = async()=>{
+        try {
+          const response = await axios.get("/api/photosUrl");
+          setPhotoList(response.data.photoUrls);
+          console.log("获取照片列表:", response.data.photoUrls);
+        } catch (error) {
+          console.error("获取照片列表失败:", error);
+        }
+      }
+      fetchPhotos();
+  },[user,loading]);
+
+
+
   return (
     <Box sx={{ display: "flex" }}>
       {/* 右侧瀑布流照片墙 */}
@@ -34,7 +58,7 @@ export default function PhotoWall() {
           columnGap: "16px",
         }}
       >
-        {photos.map((photo) => (
+        {photoList.map((photo) => (
           <Card
             key={photo.id}
             sx={{
@@ -46,7 +70,7 @@ export default function PhotoWall() {
           >
             <CardMedia
               component="img"
-              image={photo.url}
+              image={`${photo.url}?token=${token}`} // 使用本地资源路径
               alt={`photo-${photo.id}`}
             />
           </Card>

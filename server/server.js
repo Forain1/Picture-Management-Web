@@ -2,7 +2,7 @@
 import express from 'express'
 import cors from 'cors';
 import authRoute from "./routes/authRoute.js"
-import uploadRoute from "./routes/uploadRoute.js"
+import photoRoute from "./routes/photoRoute.js"
 
 const app = express();
 const PORT = 5000; // 后端端口
@@ -16,7 +16,7 @@ app.use(cors({
 }));
 
 app.use('/api',authRoute)
-app.use('/api',uploadRoute)
+app.use('/api',photoRoute)
 
 
 
