@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 
-export default function TagDialog({ tags, open, setOpen ,onClose, onClickTag}) {
+export default function TagDialog({ tags, open, setOpen ,onClose, onClickTag ,selectedTag ,setSelectedTag}) {
   const [search, setSearch] = useState("");
 
   // 根据 search 输入过滤标签
@@ -27,18 +27,22 @@ export default function TagDialog({ tags, open, setOpen ,onClose, onClickTag}) {
 
         {/* 标签列表 */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
-          {filteredTags.map((tag) => (
+          {filteredTags.map((tag) => {
+            const selected = selectedTag ? selectedTag.includes(tag) : false;
+            return (
             <Chip
               key={tag}
               label={tag}
               clickable              // 使 Chip 可点击
-              color="primary"        // 可自定义颜色
+              color={selected ? "primary" : "default"} // 点击切换颜色
               onClick={() => {
                 // 点击时调用回调，把 tag 传出去
                 if(onClickTag)onClickTag(tag);
               }}
+
             />
-          ))}
+          )}
+          )}
         </Box>
 
 
@@ -54,7 +58,10 @@ export default function TagDialog({ tags, open, setOpen ,onClose, onClickTag}) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={()=>{setOpen(false)}}>取消</Button>
+        <Button onClick={()=>{
+          setOpen(false)
+          setSelectedTag(null);
+        }}>取消</Button>
         <Button variant="contained" onClick={onClose}>
           确认
         </Button>

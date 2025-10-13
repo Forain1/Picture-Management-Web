@@ -58,7 +58,7 @@ export default class Photo{
         }
     }
 
-    static async addTagToPhoto(userid,photoid,tag){
+    static async addTagToPhoto(userid,photoid,tags){
         let connection;
         try {
             connection = await pool.getConnection();
@@ -66,11 +66,13 @@ export default class Photo{
             if(user.length===0)throw new Error('用户不存在');//验证是不是这个用户的照片
             const [photo] = await connection.execute('SELECT id FROM photos WHERE id = ? AND user_id = ?', [photoid,user[0].id]);
             if(photo.length===0)throw new Error('照片不存在');//验证这个照片存不存在
-            const [tags] = await connection.execute('SELECT * FROM tags WHERE user_id = ? AND name = ?', [user[0].id,tag]);
-            console.log(user[0].id,tag);
-            if(tags.length===0)throw new Error('标签不存在');//验证这个标签存不存在
-            const sql = 'insert into photo_tags (photo_id, tag_id) values (?,?)';
-            await connection.execute(sql,[photoid,tags[0].id]);
+            for(const tag of tags){
+                if(!tag || tag.trim()==='')continue;
+                const [tags] = await connection.execute('SELECT id FROM tags WHERE name = ? AND user_id = ?', [tag,user[0].id]);
+                if(tags.length===0)throw new Error('标签不存在');
+                const sql = 'insert into photo_tags (photo_id, tag_id) values (?,?)';
+                await connection.execute(sql,[photoid,tags[0].id]);
+            }
         } catch (error) {
             console.error(error);
             throw error;
@@ -110,7 +112,7 @@ export default class Photo{
                     tags:row.tags,//该照片的标签
                 }
             })
-            console.log(photoUrls);
+            //console.log(photoUrls);
             return photoUrls;
         } catch (error) {
             console.error(error);

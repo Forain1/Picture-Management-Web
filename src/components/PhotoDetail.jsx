@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, Chip } from "@mui/material";
 import TagList from "./TagLists";
 
-function PhotoDetail({ photo, onClose, allTags , addTagToPhoto}) {
+function PhotoDetail({ photo, onClose, allTags , addTagToPhoto }) {
   if (!photo) return null; // 没有选中照片就不显示
 
+  useEffect(()=>{
+    console.log("PhotoDetail photo changed:", photo);
+  },[photo]);
 
 
   return (
@@ -32,8 +35,10 @@ function PhotoDetail({ photo, onClose, allTags , addTagToPhoto}) {
       </Typography>
 
       {/* 标签 */}
-      <Box>
-        <Typography variant="body1">标签:</Typography>
+      <Box >
+        <Typography variant="body1" sx={{
+          mb:1
+        }}>标签:</Typography>
         {/* 使用 TagList 组件管理标签 */}
         <TagList tags={photo.tags}  allTags={allTags} addTagToPhoto={addTagToPhoto} photoid={photo.id}/>
       </Box>

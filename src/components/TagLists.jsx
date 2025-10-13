@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Chip, Box } from "@mui/material";
 import TagDialog from "./TagDialog";
 import axios from "axios";
@@ -6,33 +6,58 @@ import axios from "axios";
 
 export default function TagList({ tags , allTags ,addTagToPhoto , photoid}) {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedTag, setSelectedTag] = useState(null);//新添加给这张照片的标签
+  const [selectedTag, setSelectedTag] = useState([]);//新添加给这张照片的标签
+  const [availableTags,setAvailableTags] = useState(allTags.filter(tag => !tags.includes(tag)));//TagDialog中要显示的标签,即allTags - tags
 
+  //处理对话框关闭后的逻辑
   const handleClose = async ()=>{
     try {
         setOpenDialog(false);
         //需要把新添加标签的信息传给后端的同时更新前端该照片的tags
         addTagToPhoto(photoid,selectedTag);
         await axios.post("/api/addTagToPhoto",{photoid:photoid,tag:selectedTag});
+        setSelectedTag(null);
+        console.log("添加标签成功:", selectedTag);
     } catch (error) {
         console.error("添加标签失败:", error);
     }
   }
 
+  //处理点击标签的逻辑
   const handleClickTag = (tag) => {
     setSelectedTag((prevTags)=>{
-      if(!prevTags)return tag;
-      else return [...prevTags , tag];
+      if(!prevTags)return [tag];
+      else {
+        return prevTags.includes(tag) ? prevTags.filter(t => t !== tag) : [...prevTags, tag];
+      }
     });
+    // console.log("点击了标签:", selectedTag);
   }
+  
 
-  //allTags - tags = TagDialog中要显示的标签
-  const availableTags = allTags.filter(tag => !tags.includes(tag));
+  useEffect(()=>{
+    setAvailableTags(allTags.filter(tag => !tags.includes(tag)));
+    console.log("availableTags:", availableTags);
+    console.log("tags:", tags);
+  },[tags,allTags]);
+
+
   //console.log("availableTags:", availableTags);
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
       {tags && tags.map((tag) => (
-        <Chip key={tag} label={tag} />
+        <Chip key={tag} label={tag} 
+            sx={{
+                borderRadius: "16px",      // 小椭圆
+                height: "24px",
+                minWidth: "24px",
+                padding: "0 8px",
+                cursor: "pointer",
+                backgroundColor: "#7b3ee3ff", // 蓝色背景
+                color: "#fff",              // 白色文字
+                "&:hover": { backgroundColor: "#5f0671ff" }, // 悬浮变深蓝
+            }}
+        />
       ))}
 
       {/* + Chip */}
@@ -52,7 +77,7 @@ export default function TagList({ tags , allTags ,addTagToPhoto , photoid}) {
         />
 
 
-      <TagDialog tags={availableTags} open={openDialog} setOpen={setOpenDialog} onClose={handleClose} onClickTag={handleClickTag}/>
+      <TagDialog tags={availableTags} open={openDialog} setOpen={setOpenDialog} onClose={handleClose} onClickTag={handleClickTag} selectedTag={selectedTag} setSelectedTag={setSelectedTag}/>
     </Box>
   );
 }
