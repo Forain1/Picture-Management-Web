@@ -81,6 +81,27 @@ export default class Photo{
         }
     }
 
+    static async removeTagFromPhoto(userid,photoid,tag){
+        let connection;
+        try {
+            connection = await pool.getConnection();
+            const [user] = await connection.execute("select id from users where userid = ?",[userid]);
+            if(user.length===0)throw new Error('用户不存在');
+            const [photo] = await connection.execute('select id from photos where id = ? and user_id = ?',[photoid,user[0].id]);
+            if(photo.length===0)throw new Error('照片不存在');
+            const [tagid] = await connection.execute('select id from tags where name = ? and user_id = ?',[tag,user[0].id]);
+            if(tagid.length===0)throw new Error('标签不存在');
+            const sql = 'delete from photo_tags where photo_id = ? and tag_id = ?';
+            await connection.execute(sql,[photoid,tagid[0].id]);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }finally{
+            if(connection)connection.release();
+        }
+    }
+
+
 
     //通过userid获取该用户的照片url等信息
     static async getPhotoUrls(userid,tags){

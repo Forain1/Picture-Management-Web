@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Chip } from "@mui/material";
 import TagList from "./TagLists";
 
-function PhotoDetail({ photo, onClose, allTags , addTagToPhoto }) {
+function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPhoto}) {
   if (!photo) return null; // 没有选中照片就不显示
 
   useEffect(()=>{
@@ -40,7 +40,7 @@ function PhotoDetail({ photo, onClose, allTags , addTagToPhoto }) {
           mb:1
         }}>标签:</Typography>
         {/* 使用 TagList 组件管理标签 */}
-        <TagList tags={photo.tags}  allTags={allTags} addTagToPhoto={addTagToPhoto} photoid={photo.id}/>
+        <TagList tags={photo.tags}  allTags={allTags} addTagToPhoto={addTagToPhoto} photoid={photo.id} removeTagFromPhoto={removeTagFromPhoto} />
       </Box>
     </Box>
   );

@@ -1,5 +1,5 @@
 import express from "express"
-import {uploadPhoto , getPhotoUrls ,sendPhoto , getAllTags , uploadTag , addTagToPhoto} from "../controllers/photoController.js"
+import {uploadPhoto , getPhotoUrls ,sendPhoto , getAllTags , uploadTag , addTagToPhoto , removeTagFromPhoto} from "../controllers/photoController.js"
 import upload from "../middleware/upload.js"
 import { authToken } from "../middleware/authToken.js";
 
@@ -13,5 +13,6 @@ router.get("/photosUrl",authToken,getPhotoUrls);
 router.get("/uploads/:userid/:filename",authToken,sendPhoto);
 router.get("/allTags",authToken,getAllTags);
 router.post("/addTagToPhoto",authToken,addTagToPhoto);
+router.post("/removeTagFromPhoto",authToken,removeTagFromPhoto);
 
 export default router;

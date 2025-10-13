@@ -78,6 +78,19 @@ export const addTagToPhoto = async(req,res) =>{
 }
 
 
+export const removeTagFromPhoto = async(req,res)=>{
+    try {
+        const user = req.user;
+        const {photoid,tag} = req.body;
+        await Photo.removeTagFromPhoto(user.userid,photoid,tag);
+        res.status(200).json({message:'删除照片标签成功'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({msssage:'删除照片标签失败',error:error.message});
+    }
+}
+
+
 
 //这里需要后续做排序,根据tag来返回需要的url,通过photo类进行完善
 export const getPhotoUrls = async(req,res) =>{

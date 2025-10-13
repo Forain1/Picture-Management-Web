@@ -12,11 +12,8 @@ export default function PhotoWall({photoList,allTags,setPhotoList}) {
   const [page,setPage] = useState(0);//一开始的照片页数,每一页只展示十张照片,to be done
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
-  //用来改变photolist中某张照片的tag
+  //用来添加photolist中某张照片的tag,注意这里的newTag是个数组
   const addTagToPhoto = (photoId, newTags) => {
-
-
-
     setPhotoList(prevList =>
       prevList.map(photo =>
         photo.id === photoId
@@ -29,6 +26,22 @@ export default function PhotoWall({photoList,allTags,setPhotoList}) {
     );
     console.log("update photoList tags", photoList);
   };
+
+
+  //用来删除phtotList中某张照片的tag,这里的tagToRemove单个tag,即字符串
+  const removeTagFromPhoto = (photoId, tagToRemove) => {
+    setPhotoList(prevList =>
+      prevList.map(photo =>
+        photo.id === photoId
+          ? {
+              ...photo,
+              tags: photo.tags.filter(tag => tag !== tagToRemove),
+            }
+          : photo
+      )
+    )
+  }
+
 
     //用来同步照片改变tag,从而确保侧边栏显示的标签是最新的
     useEffect(() => {
@@ -75,7 +88,7 @@ export default function PhotoWall({photoList,allTags,setPhotoList}) {
 
         {/* 侧边栏 */}
         {selectedPhoto && (
-          <PhotoDetail photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} allTags={allTags} addTagToPhoto={addTagToPhoto} />
+          <PhotoDetail photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} allTags={allTags} addTagToPhoto={addTagToPhoto} removeTagFromPhoto={removeTagFromPhoto} />
         )}
       </Box>
 
