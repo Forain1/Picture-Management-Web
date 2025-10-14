@@ -28,7 +28,7 @@ export default function Navbar() {
   return (
     <>
       {/* 固定导航栏 */}
-      <header className="fixed inset-x-0 top-0 z-50">
+      <header className="fixed inset-x-0 top-0 z-10">
         <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8 h-20">
           {/* Logo */}
           <div className="flex lg:flex-1">

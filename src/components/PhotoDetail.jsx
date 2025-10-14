@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Chip, Button } from "@mui/material";
 import TagList from "./TagLists";
+import PhotoEditor from "./PhotoEditor";
+import { useUser } from "./UserProvider";
 
 function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPhoto , deletePhoto }) {
   if (!photo) return null; // 没有选中照片就不显示
-
-  useEffect(()=>{
-    console.log("PhotoDetail photo changed:", photo);
-  },[photo]);
-
-
+  const {token} = useUser();
   return (
     <Box
       sx={{
@@ -50,8 +47,12 @@ function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPh
               }}>删除照片</Button>
       </Box>
 
+        <Box>
+        <PhotoEditor photo={photo}/>
+        </Box>
 
         <Button variant="contained" color="primary" onClick={onClose}>关闭</Button>
+        
     </Box>
   );
 }
