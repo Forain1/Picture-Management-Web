@@ -101,6 +101,24 @@ export default class Photo{
         }
     }
 
+    static async deletePhoto(userid,photoid){
+        let connection;
+        try {
+            connection = await pool.getConnection();
+            const [user] = await connection.execute('select id from users where userid = ?',[userid]);
+            if(user.length===0)throw Error('用户不存在');
+            const [url] = await connection.execute('select path from photos where id = ? and user_id = ?',[photoid,user[0].id]);
+            if(url.length===0)throw Error('照片不存在');
+            const sql = 'delete from photos where id = ? and user_id = ?';
+            await connection.execute(sql,[photoid,user[0].id]);
+            return url[0].path;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }finally{
+            if(connection)connection.release();
+        }
+    }
 
 
     //通过userid获取该用户的照片url等信息

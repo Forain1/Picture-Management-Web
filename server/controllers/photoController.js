@@ -91,6 +91,19 @@ export const removeTagFromPhoto = async(req,res)=>{
 }
 
 
+export const deletePhoto = async(req,res)=>{
+    try {
+        const user = req.user;
+        const {photoid} = req.body;
+        const url = await Photo.deletePhoto(user.userid,photoid);
+        if(url)fs.unlinkSync(url);//删除照片文件
+        res.status(200).json({message:'删除照片成功'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:'删除照片失败',error:error.message});
+    }
+}
+
 
 //这里需要后续做排序,根据tag来返回需要的url,通过photo类进行完善
 export const getPhotoUrls = async(req,res) =>{

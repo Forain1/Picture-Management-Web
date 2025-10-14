@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Chip } from "@mui/material";
+import { Box, Typography, Chip, Button } from "@mui/material";
 import TagList from "./TagLists";
 
-function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPhoto}) {
+function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPhoto , deletePhoto }) {
   if (!photo) return null; // 没有选中照片就不显示
 
   useEffect(()=>{
@@ -42,6 +42,16 @@ function PhotoDetail({ photo, onClose, allTags , addTagToPhoto  ,removeTagFromPh
         {/* 使用 TagList 组件管理标签 */}
         <TagList tags={photo.tags}  allTags={allTags} addTagToPhoto={addTagToPhoto} photoid={photo.id} removeTagFromPhoto={removeTagFromPhoto} />
       </Box>
+
+      <Box>
+            <Button variant="contained" color="error"  sx={{mb:2}} onClick={()=>{
+              deletePhoto(photo.id)
+              onClose();
+              }}>删除照片</Button>
+      </Box>
+
+
+        <Button variant="contained" color="primary" onClick={onClose}>关闭</Button>
     </Box>
   );
 }

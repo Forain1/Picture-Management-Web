@@ -64,7 +64,7 @@ export default function TagList({ tags , allTags ,addTagToPhoto , removeTagFromP
 
   //console.log("availableTags:", availableTags);
   return (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1,  mb: 2 }}>
       {tags.map(tag => (
         tag === removeTag ? (
           // 删除状态

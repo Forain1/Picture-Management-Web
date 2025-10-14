@@ -42,6 +42,16 @@ export default function PhotoWall({photoList,allTags,setPhotoList,filterTags}) {
     )
   }
 
+  //删除photo 除了前端以外 还有要向后端发送请求
+  const deletePhoto = async (photoid)=>{
+    try {
+      await axios.post("/api/deletePhoto",{photoid});
+      setPhotoList(prevList => prevList.filter(photo => photo.id !== photoid));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
     //用来同步照片改变tag,从而确保侧边栏显示的标签是最新的
     useEffect(() => {
@@ -100,7 +110,7 @@ export default function PhotoWall({photoList,allTags,setPhotoList,filterTags}) {
 
         {/* 侧边栏 */}
         {selectedPhoto && (
-          <PhotoDetail photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} allTags={allTags} addTagToPhoto={addTagToPhoto} removeTagFromPhoto={removeTagFromPhoto} />
+          <PhotoDetail photo={selectedPhoto} onClose={() => setSelectedPhoto(null)} allTags={allTags} addTagToPhoto={addTagToPhoto} removeTagFromPhoto={removeTagFromPhoto} deletePhoto={deletePhoto} />
         )}
       </Box>
 
