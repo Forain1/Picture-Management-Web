@@ -1,6 +1,6 @@
 import ProfileSidebar from "../components/ProfileSidebar"
 import PhotoWall from "../components/PhotoWall"
-import { Box } from "@mui/material"
+import { Box ,Button} from "@mui/material"
 import { useUser } from "../components/UserProvider";
 import { useState , useEffect } from "react";
 import axios from "axios";
@@ -9,6 +9,7 @@ export default function Profile() {
     const {user,loading} = useUser();
     const [allTags,setAllTags] = useState([]);//该用户所有标签,用来搜索 
     const [photoList, setPhotoList] = useState([]);//该用户照片的url
+    const [filterTags,setFilterTags] = useState([]);//该用户筛选的照片的tag
 
 
 
@@ -33,10 +34,10 @@ export default function Profile() {
     return (
         <Box sx={{ display: "flex" }}>
             <Box sx={{ width: "15vw", flexShrink: 0 }}>
-                <ProfileSidebar allTags={allTags} setAllTags={setAllTags} />
+                <ProfileSidebar allTags={allTags} setAllTags={setAllTags} setFilterTags={setFilterTags} filterTags={filterTags} />
             </Box>
             <Box sx={{ flex: 1 }}>
-                <PhotoWall photoList={photoList} setPhotoList={setPhotoList} allTags={allTags}  />
+                <PhotoWall photoList={photoList} setPhotoList={setPhotoList} allTags={allTags}  filterTags={filterTags}/>
             </Box>
         </Box>
     )

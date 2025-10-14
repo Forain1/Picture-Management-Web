@@ -11,6 +11,7 @@ export default function ShowTagBtn({ allTags }) {
         fullWidth
         variant="outlined" 
         color="primary" 
+        sx={{mb:1}}
         onClick={() => setOpen(true)}
       >
         查看所有标签

@@ -4,9 +4,9 @@ import axios from "axios";
 import React, { useState } from "react";
 import AddTagBtn from "./AddTagBtn";
 import ShowTagBtn from "./ShowTagBtn";
+import FilterTagsBtn from "./FilterTagsBtn";
 
-
-export default function ProfileSidebar({allTags,setAllTags}) {
+export default function ProfileSidebar({allTags,setAllTags,setFilterTags,filterTags}) {
     const {user} = useUser();
     const [file ,setFile] = useState(null);
     const [uploading,setUploading] = useState(false);
@@ -125,7 +125,7 @@ export default function ProfileSidebar({allTags,setAllTags}) {
             fullWidth
             variant="outlined"
             color="secondary"
-            onClick={handleCancel} // 你需要实现的取消函数
+            onClick={handleCancel} 
             disabled={uploading}
           >
             取消上传
@@ -137,8 +137,9 @@ export default function ProfileSidebar({allTags,setAllTags}) {
       {/* 用来输入标签进行检索 */}
       <AddTagBtn onAddTag={onAddTag} />
       <ShowTagBtn allTags={allTags} />
+      <FilterTagsBtn setFilterTags={setFilterTags} allTags={allTags} filterTags={filterTags} />
 
-      {/* <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
+      {/* <Button fullWidth variant="outlined" sx={{ mb: 1 }} onClick={()=>console.log(filterTags)}>
         添加标签
       </Button>
         <Button fullWidth variant="outlined" sx={{ mb: 1 }}>
@@ -147,6 +148,7 @@ export default function ProfileSidebar({allTags,setAllTags}) {
       <Button fullWidth color="error" variant="outlined">
         退出登录
       </Button> */}
+
     </Box>
   );
 }

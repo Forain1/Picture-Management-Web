@@ -6,7 +6,7 @@ import { useUser } from "./UserProvider";
 import PhotoDetail from "./PhotoDetail";
 
 
-export default function PhotoWall({photoList,allTags,setPhotoList}) {
+export default function PhotoWall({photoList,allTags,setPhotoList,filterTags}) {
 
   const {token} = useUser();
   const [page,setPage] = useState(0);//一开始的照片页数,每一页只展示十张照片,to be done
@@ -66,24 +66,36 @@ export default function PhotoWall({photoList,allTags,setPhotoList}) {
             height: "100%",
           }}
         >
-          {photoList.map(photo => (
-            <Card
-              key={photo.id}
-              sx={{
-                mb: "16px",
-                borderRadius: "16px",
-                overflow: "hidden",
-                breakInside: "avoid",
-              }}
-            >
-              <CardMedia
-                component="img"
-                image={`${photo.url}?token=${token}`}
-                alt={`photo-${photo.id}`}
-                onClick={() => setSelectedPhoto(photo)}
-              />
-            </Card>
-          ))}
+          {photoList.map(photo => {
+            let show = true;
+            for(let i=0;i<filterTags.length;i++){
+              if(!photo.tags||!photo.tags.includes(filterTags[i])){
+                show = false;
+                break;
+              }
+            }
+           return show?(
+              <Card
+                key={photo.id}
+                sx={{
+                  mb: "16px",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  breakInside: "avoid",
+                  boxShadow: photo===selectedPhoto?"0 0 15px 4px rgba(100, 181, 246, 0.6)":"none",
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  image={`${photo.url}?token=${token}`}
+                  alt={`photo-${photo.id}`}
+                  onClick={() => {
+                    photo===selectedPhoto?setSelectedPhoto(null):setSelectedPhoto(photo)
+                  }}
+                />
+              </Card>
+            ):null;
+          })}
         </Box>
 
         {/* 侧边栏 */}

@@ -45,7 +45,6 @@ export default function TagList({ tags , allTags ,addTagToPhoto , removeTagFromP
     try {
       //把删除标签的信息传给后端
       await axios.post("/api/removeTagFromPhoto",{photoid:photoid,tag});
-
       //从前端删除该标签
       removeTagFromPhoto(photoid,tag);
       setRemoveTag(null);
