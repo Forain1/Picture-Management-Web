@@ -1,16 +1,22 @@
-# React + Vite
+# 简易图片管理网站
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. 实现用户注册、登录功能，用户注册时需要填写必要的信息并验证，如用户名、密码要
+求在6字节以上，email的格式验证，并保证用户名和email在系统中唯一，用户登录后
+可以进行以下操作。 
+2. 通过PC或手机浏览器将照片或其他类型的图片上传到网站进行存储。 
+3. 能够通过照片的exif信息自动创建图片分类标签及其他辅助信息，如时间、地点、图片
+分辨率等。 
+4. 可以给图片增加自定义分类标签，方便检索。 
+5. 生产缩略图方便后续显示。 
+6. 图片信息保存在数据库中，方便后续查询。 
+7. 提供查询界面能根据各种条件查找图片。 
+8. 提供友好的展示界面，如选择一定的图片进行轮播显示等 
+9. 对选定的图片提供简单的编辑功能，如裁剪、修改色调等 
+10. 提供删除功能 
+11. 样式适配手机，开发手机 App 或能够在手机浏览器/微信等应用内置的浏览器中友好显
+示
 
-Currently, two official plugins are available:
+# 项目启动方法
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+在根目录下使用`docker compose up`即可启动该项目
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
